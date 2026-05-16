@@ -21,10 +21,11 @@ function Verify2FA() {
     setError('');
 
     const savedCode = localStorage.getItem('2fa');
-    
+    const savedToken = localStorage.getItem('token');
+
     if (code === savedCode) {
       localStorage.removeItem('2fa');
-      createSession();
+      createSession(savedToken);
       navigate('/dashboard');
     } else {
       setError('Código inválido');

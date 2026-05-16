@@ -19,7 +19,7 @@ function Login() {
     setApiError('');
 
     const response = await login(data);
-
+    console.log(response);
     // Erro na API
     if (response.error) {
       setApiError(response.error);
@@ -29,6 +29,7 @@ function Login() {
     // Login com sucesso
     if (response.code2FA) {
       localStorage.setItem('2fa', response.code2FA);
+      localStorage.setItem('token', response.token);
       navigate('/verify-2fa');
     }
   }
