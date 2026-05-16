@@ -1,49 +1,67 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../services/authService';
 import Input from '../components/Input';
 import Button from '../components/Button';
-import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema } from '../validations/loginSchema';
+import { useState } from 'react';
 
 function Login() {
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
   const navigate = useNavigate();
+  const [apiError, setApiError] = useState('')
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    
-    if (!email || !password) {
-      setError('Preencha todos os campos');
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
+
+  async function onSubmit(data) {
+    setApiError('');
+
+    const response = await login(data);
+
+    // Erro na API
+    if (response.error) {
+      setApiError(response.error);
       return;
     }
-    setError('');
 
-    const response = await login({ email, password });
-    
+    // Login com sucesso
     if (response.code2FA) {
-      localStorage.setItem('2fa', response.code2FA );
+      localStorage.setItem('2fa', response.code2FA);
       navigate('/verify-2fa');
-    } else {
-      setError(response.message || 'Erro ao fazer login');
     }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow w-96">
-        <h1 className="text-2xl font-bold mb-6">
-          Login
-        </h1>
-        {error && <p className="text-red-500 my-2">{error}</p>}
-        <Input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-        <Input type="password" placeholder="Senha" onChange={(e) => setPassword(e.target.value)} />
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-8 rounded shadow w-96">
+        <h1 className="text-2xl font-bold mb-6">Login</h1>
+
+        {apiError && (
+          <p className="text-red-500 mb-4">
+            {apiError}
+          </p>
+        )}
+
+        <Input type="email" placeholder="Email" {...register('email')} />
+        {errors.email && (
+          <p className="text-red-500 mb-2">
+            {errors.email.message}
+          </p>
+        )}
+
+        <Input type="password" placeholder="Senha" {...register('password')} />
+        {errors.password && (
+          <p className="text-red-500 mb-2">
+            {errors.password.message}
+          </p>
+        )}
+
         <Button className="bg-blue-500 text-white w-full p-2 rounded" type="submit">
           Entrar
         </Button>
+
         <p className="mt-4 text-center">
           Não possui conta?
           <Link to="/register" className="text-blue-500 ml-2">

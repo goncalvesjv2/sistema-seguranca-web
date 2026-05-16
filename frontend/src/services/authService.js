@@ -11,13 +11,23 @@ export async function login(data) {
     const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(result.message || 'Erro no login');
+      // ERROS ZOD
+      if (result.errors) {
+        return {
+          error: result.errors.map((err) => err.message).join(', ')
+        };
+      }
+
+      return {
+        error: result.message || result.error || 'Erro no login'
+      };
     }
-
     return result;
-
+    
   } catch (error) {
-    return { error: error.message };
+    return {
+      error: error.message
+    };
   }
 }
 
@@ -34,12 +44,21 @@ export async function register(data) {
     const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(result.message || 'Erro no cadastro');
+      // ERROS ZOD
+      if (result.errors) {
+        return {
+          error: result.errors.map((err) => err.message).join(', ')
+        };
+      }
+      return {
+        error: result.message || result.error || 'Erro no cadastro'
+      };
     }
-
     return result;
 
   } catch (error) {
-    return { error: error.message };
+    return {
+      error: error.message
+    };
   }
 }
