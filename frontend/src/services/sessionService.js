@@ -1,5 +1,5 @@
-export function createSession() {
-  localStorage.setItem('token', 'valid-token');
+export function createSession(token) {
+  localStorage.setItem('token', token);
 }
 
 export function logout() {
@@ -8,4 +8,8 @@ export function logout() {
 
 export function isAuthenticated() {
   return !!localStorage.getItem('token');
+}
+
+export function getToken() {
+  return localStorage.getItem('token');
 }
