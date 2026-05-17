@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import connection from '../config/database.js';
 import { generate2FA } from '../utils/generate2FA.js';
+import twoFactorStorage from '../storage/twoFactorStorage.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -18,7 +19,6 @@ export const registerService = async ( name, email, password ) => {
   `;
 
   return new Promise((resolve, reject) => {
-
     connection.query(
       sql,
       [name, email, hashedPassword],
@@ -93,13 +93,16 @@ export const loginService = async (email, password) => {
         console.log('Código 2FA:', code2FA);
 
         // GERAR TOKEN JWT
-        const token = jwt.sign(
-          { id: user.id, email: user.email, name: user.name },
+        const tempToken = jwt.sign(
+          { id: user.id, email: user.email },
           process.env.JWT_SECRET,
-          { expiresIn: process.env.JWT_EXPIRES_IN }
+          { expiresIn: '10m' }
         );
 
-        resolve({ message: '2FA enviado', code2FA, token });
+        // SALVAR TEMPORARIAMENTE
+        twoFactorStorage[tempToken] = { code: code2FA, user };
+
+        resolve({ message: '2FA enviado', tempToken });
       }
     );
   });

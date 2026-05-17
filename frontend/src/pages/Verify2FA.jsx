@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { verify2FA } from '../services/authService';
 import { createSession } from '../services/sessionService';
 import Input from '../components/Input';
 import Button from '../components/Button';
@@ -10,25 +11,20 @@ function Verify2FA() {
 
   const navigate = useNavigate();
 
-  function handleVerify(e) {
+  async function handleVerify(e) {
     e.preventDefault();
 
-    if (!code) {
-      setError('Digite o código');
-      return;
-    }
+    const tempToken = localStorage.getItem('tempToken');
 
-    setError('');
-
-    const savedCode = localStorage.getItem('2fa');
-    const savedToken = localStorage.getItem('token');
-
-    if (code === savedCode) {
-      localStorage.removeItem('2fa');
-      createSession(savedToken);
+    const response = await verify2FA({code, tempToken});
+    console.log('Resposta da verificação 2FA:', response);
+    
+    if (response?.token) {
+      localStorage.setItem('token', response.token);
+      localStorage.removeItem('tempToken');
       navigate('/dashboard');
     } else {
-      setError('Código inválido');
+      setError(response?.error || response?.message || 'Código inválido');
     }
   }
 
