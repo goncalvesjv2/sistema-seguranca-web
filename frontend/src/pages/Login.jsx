@@ -21,17 +21,19 @@ function Login() {
     const response = await login(data);
     console.log(response);
     // Erro na API
-    if (response.error) {
+    if (response?.error) {
       setApiError(response.error);
       return;
     }
 
     // Login com sucesso
-    if (response.code2FA) {
-      localStorage.setItem('2fa', response.code2FA);
-      localStorage.setItem('token', response.token);
-      navigate('/verify-2fa');
+    if (!response?.tempToken) {
+      setApiError('Resposta inesperada da API');
+      return;
     }
+
+    localStorage.setItem('tempToken', response.tempToken);
+    navigate('/verify-2fa');
   }
 
   return (
