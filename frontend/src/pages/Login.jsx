@@ -61,7 +61,13 @@ function Login() {
           </p>
         )}
 
-        <Button className="bg-blue-500 text-white w-full p-2 rounded" type="submit">
+        <p className="my-2 text-sm">
+          <Link to="/forgot-password" className="text-blue-500">
+            Esqueci minha senha
+          </Link>
+        </p>
+
+        <Button className="bg-blue-500 text-white w-full mt-2 p-2 rounded" type="submit">
           Entrar
         </Button>
 
