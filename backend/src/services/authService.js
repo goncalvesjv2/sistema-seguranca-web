@@ -4,6 +4,7 @@ import connection from '../config/database.js';
 import { generate2FA } from '../utils/generate2FA.js';
 import twoFactorStorage from '../storage/twoFactorStorage.js';
 import dotenv from 'dotenv';
+import { securityLogger } from '../utils/securityLogger.js';
 
 dotenv.config();
 
@@ -58,6 +59,12 @@ export const loginService = async (email, password) => {
 
         // Usuário não encontrado
         if (results.length === 0) {
+
+          securityLogger(
+            'Login Failed',
+            `Usuário não encontrado para email: ${email}`
+          )
+
           return reject({
             status: 401,
             message: 'Usuário não encontrado'
@@ -71,6 +78,12 @@ export const loginService = async (email, password) => {
 
         // Senha inválida
         if (!validPassword) {
+
+          securityLogger(
+            'LOGIN FAILED',
+            `Senha inválida: ${email}`
+          );
+
           loginAttempts[email] = (loginAttempts[email] || 0) + 1;
 
           // Aplicar delay
@@ -78,6 +91,12 @@ export const loginService = async (email, password) => {
 
           // Bloquear após 4 tentativas
           if (loginAttempts[email] >= 4) {
+            
+            securityLogger(
+              'ACCOUNT BLOCKED',
+              `Muitas tentativas: ${email}`
+            )
+            
             return reject({
               status: 403,
               message:
@@ -94,6 +113,10 @@ export const loginService = async (email, password) => {
         // Gerar código 2FA
         const code2FA = generate2FA();
         console.log('Código 2FA:', code2FA);
+        securityLogger(
+          'LOGIN SUCESS',
+          `2FA enviado para ${email} - Código: ${code2FA}`
+        )
 
         // Token temporário
         const tempToken = jwt.sign(
