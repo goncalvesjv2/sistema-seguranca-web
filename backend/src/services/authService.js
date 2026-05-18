@@ -48,7 +48,7 @@ export const loginService = async (email, password) => {
       [email],
       async (error, results) => {
 
-        // ERRO MYSQL
+        // Erro MySQL
         if (error) {
           return reject({
             status: 500,
@@ -56,7 +56,7 @@ export const loginService = async (email, password) => {
           });
         }
 
-        // USUÁRIO NÃO ENCONTRADO
+        // Usuário não encontrado
         if (results.length === 0) {
           return reject({
             status: 401,
@@ -66,15 +66,18 @@ export const loginService = async (email, password) => {
 
         const user = results[0];
 
-        // VALIDAR SENHA
+        // Validar senha
         const validPassword = await bcrypt.compare(password, user.password);
 
-        // SENHA INVÁLIDA
+        // Senha inválida
         if (!validPassword) {
           loginAttempts[email] = (loginAttempts[email] || 0) + 1;
 
-          // BLOQUEAR APÓS 3 TENTATIVAS
-          if (loginAttempts[email] >= 3) {
+          // Aplicar delay
+          await applyDelay(email);
+
+          // Bloquear após 4 tentativas
+          if (loginAttempts[email] >= 4) {
             return reject({
               status: 403,
               message:
@@ -82,24 +85,24 @@ export const loginService = async (email, password) => {
             });
           }
 
-          return reject({status: 401, message: 'Senha inválida'});
+          return reject({status: 401, message: `Senha inválida. Tentativas: ${loginAttempts[email]}`});
         }
 
-        // RESETAR TENTATIVAS
+        // Resetar tentativas
         loginAttempts[email] = 0;
 
-        // GERAR CÓDIGO 2FA
+        // Gerar código 2FA
         const code2FA = generate2FA();
         console.log('Código 2FA:', code2FA);
 
-        // GERAR TOKEN JWT
+        // Token temporário
         const tempToken = jwt.sign(
           { id: user.id, email: user.email },
           process.env.JWT_SECRET,
           { expiresIn: '10m' }
         );
 
-        // SALVAR TEMPORARIAMENTE
+        // Salvar código 2FA
         twoFactorStorage[tempToken] = { 
           code: code2FA, 
           user,
@@ -112,3 +115,12 @@ export const loginService = async (email, password) => {
     );
   });
 };
+
+async function applyDelay(email) {
+  const attempts = loginAttempts[email] || 1;
+
+  const delay = attempts * 1000; // 1 segundo por tentativa
+  console.log(`Aplicando delay de ${delay}ms para ${email}`);
+
+  return new Promise(resolve => setTimeout(resolve, delay));
+}
