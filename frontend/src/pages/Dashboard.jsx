@@ -1,13 +1,28 @@
 import { logout } from '../services/sessionService';
 import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { getDashboard } from '../services/dashboardServices';
 
 function Dashboard() {
 
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
-  function handleLogout() {
-    logout();
+  useEffect(() => {
+    async function loadDashboard() {
+      const response = await getDashboard();
+
+      if(response.user) {
+        setUser(response.user);
+      }
+    }
+
+    loadDashboard();
+  }, []);
+
+  async function handleLogout() {
+    await logout();
     navigate('/');
   }
 
@@ -16,6 +31,18 @@ function Dashboard() {
       <h1 className="text-3xl font-bold mb-6">
         Dashboard
       </h1>
+
+      {user && (
+        <>
+          <p className="mb-2">
+            Nome: {user.name}
+          </p>
+          <p className="mb-6">
+            Email: {user.email}
+          </p>
+        </>
+      )}
+
       <p className="mb-6">
         Usuário autenticado
       </p>

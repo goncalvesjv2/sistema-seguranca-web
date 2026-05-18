@@ -4,6 +4,8 @@ import Register from '../pages/Register';
 import Verify2FA from '../pages/Verify2FA';
 import Dashboard from '../pages/Dashboard';
 import ProtectedRoute from './ProtectedRoute';
+import ForgotPassword from '../pages/ForgotPassword';
+import ResetPassword from '../pages/ResetPassword';
 
 function AppRoutes() {
   return (
@@ -19,6 +21,8 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </Router>
   );
