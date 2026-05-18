@@ -8,4 +8,10 @@ const router = Router();
 router.post('/register', validate(registerSchema), register);
 router.post('/login', validate(loginSchema), login);
 
+router.get('/teste', (req, res, next) => {
+
+  next(new Error('Erro de teste'));
+
+});
+
 export default router;

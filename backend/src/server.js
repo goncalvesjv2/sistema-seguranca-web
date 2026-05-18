@@ -1,5 +1,8 @@
 import app from './app.js';
+import logger from './config/logger.js';
 
-app.listen(3000, () => {
-  console.log('Servidor rodando na porta 3000');
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  logger.info(`Servidor rodando na porta ${PORT}`);
 });
