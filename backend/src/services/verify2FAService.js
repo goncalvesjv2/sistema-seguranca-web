@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import twoFactorStorage from '../storage/twoFactorStorage.js';
+import { securityLogger } from '../utils/securityLogger.js';
 
 dotenv.config();
 
@@ -10,6 +11,11 @@ export function verify2FAService(tempToken, code) {
 
     // Token não existe
     if (!data) {
+        securityLogger(
+            '2FA FAILED',
+            'Sessão 2FA inválida' 
+        )
+
         throw {
             status: 401,
             message: 'Sessão 2FA inválida'
@@ -30,6 +36,11 @@ export function verify2FAService(tempToken, code) {
 
     // Verificar código
     if (data.code !== code) {
+        securityLogger(
+            '2FA FAILED',
+            `Código inválido para: ${data.user.email}`
+        );
+
         throw {
             status: 401,
             message: 'Código inválido'
@@ -51,6 +62,11 @@ export function verify2FAService(tempToken, code) {
         }
     );
 
+    securityLogger(
+        '2FA SUCCESS',
+        `Usuário autenticado: ${user.email}`
+    );
+    
     // Remover 2FA temporário
     delete twoFactorStorage[tempToken];
 
