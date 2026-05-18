@@ -100,7 +100,12 @@ export const loginService = async (email, password) => {
         );
 
         // SALVAR TEMPORARIAMENTE
-        twoFactorStorage[tempToken] = { code: code2FA, user };
+        twoFactorStorage[tempToken] = { 
+          code: code2FA, 
+          user,
+          createdAt: Date.now(),
+          expiresIn: 5 * 60 * 1000 // 5 minutos
+        };
 
         resolve({ message: '2FA enviado', tempToken });
       }
