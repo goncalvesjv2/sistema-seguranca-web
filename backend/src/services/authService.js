@@ -5,6 +5,7 @@ import { generate2FA } from '../utils/generate2FA.js';
 import twoFactorStorage from '../storage/twoFactorStorage.js';
 import dotenv from 'dotenv';
 import { securityLogger } from '../utils/securityLogger.js';
+import { send2FACode } from './mailService.js';
 
 dotenv.config();
 
@@ -112,11 +113,25 @@ export const loginService = async (email, password) => {
 
         // Gerar código 2FA
         const code2FA = generate2FA();
-        console.log('Código 2FA:', code2FA);
-        securityLogger(
-          'LOGIN SUCESS',
-          `2FA enviado para ${email} - Código: ${code2FA}`
-        )
+
+        // Enviar código por email
+        try {
+          await send2FACode(email, code2FA);
+          securityLogger(
+            'LOGIN SUCCESS',
+            `2FA enviado para ${email}`
+          );
+        } catch (err) {
+          securityLogger(
+            'EMAIL ERROR',
+            `Falha ao enviar 2FA para ${email}: ${err.message}`
+          );
+
+          return reject({
+            status: 500,
+            message: 'Erro ao enviar código 2FA'
+          });
+        }
 
         // Token temporário
         const tempToken = jwt.sign(

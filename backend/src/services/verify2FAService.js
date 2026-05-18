@@ -24,7 +24,7 @@ export function verify2FAService(tempToken, code) {
 
     // Verificar expiração
     const now = Date.now();
-    const expired = now > (data.createAt + data.expiresIn);
+    const expired = now > (data.createdAt + data.expiresIn);
 
     if (expired) {
         delete twoFactorStorage[tempToken];

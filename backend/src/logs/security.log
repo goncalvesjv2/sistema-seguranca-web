@@ -1,3 +1,11 @@
 [2026-05-18T13:51:19.650Z] LOGIN SUCESS - 2FA enviado para erick@email.com - Código: 566092
 [2026-05-18T13:51:35.592Z] 2FA SUCCESS - Usuário autenticado: erick@email.com
 [2026-05-18T13:52:38.548Z] LOGIN FAILED - Senha inválida: erick@email.com
+[2026-05-18T17:02:47.625Z] LOGIN SUCCESS - 2FA enviado para joaogoncalves3m@gmail.com
+[2026-05-18T17:02:49.870Z] LOGIN SUCCESS - 2FA enviado para joaogoncalves3m@gmail.com
+[2026-05-18T17:03:01.813Z] 2FA FAILED - Código inválido para: joaogoncalves3m@gmail.com
+[2026-05-18T17:03:04.667Z] 2FA FAILED - Código inválido para: joaogoncalves3m@gmail.com
+[2026-05-18T17:03:13.684Z] 2FA SUCCESS - Usuário autenticado: joaogoncalves3m@gmail.com
+[2026-05-18T17:07:35.859Z] LOGIN SUCCESS - 2FA enviado para joaogoncalves3m@gmail.com
+[2026-05-18T17:07:37.613Z] LOGIN SUCCESS - 2FA enviado para joaogoncalves3m@gmail.com
+[2026-05-18T17:07:53.619Z] 2FA SUCCESS - Usuário autenticado: joaogoncalves3m@gmail.com
