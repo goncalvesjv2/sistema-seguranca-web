@@ -6,7 +6,7 @@ export async function logout() {
   const token = localStorage.getItem('token');
 
   try {
-    await fetch('http://localhost:3000/session/logout', {
+    await fetch('https://localhost:3000/session/logout', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`

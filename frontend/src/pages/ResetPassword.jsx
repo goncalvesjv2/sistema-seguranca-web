@@ -11,7 +11,7 @@ export default function ResetPassword() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const res = await fetch('http://localhost:3000/recovery/reset-password', {
+    const res = await fetch('https://localhost:3000/recovery/reset-password', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

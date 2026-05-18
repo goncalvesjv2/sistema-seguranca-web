@@ -3,7 +3,7 @@ import { getToken } from "./sessionService";
 export async function getDashboard() {
     try {
         const token = getToken();
-        const response = await fetch('http://localhost:3000/api/dashboard', {
+        const response = await fetch('https://localhost:3000/api/dashboard', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
