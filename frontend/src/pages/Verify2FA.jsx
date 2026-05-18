@@ -20,10 +20,13 @@ function Verify2FA() {
     console.log('Resposta da verificação 2FA:', response);
     
     if (response?.token) {
-      localStorage.setItem('token', response.token);
+      createSession(response.token);
       localStorage.removeItem('tempToken');
       navigate('/dashboard');
     } else {
+      if(response?.message === 'Código 2FA expirado') {
+        localStorage.removeItem('tempToken');
+      }
       setError(response?.error || response?.message || 'Código inválido');
     }
   }

@@ -8,6 +8,7 @@ export function verify2FAService(tempToken, code) {
 
     const data = twoFactorStorage[tempToken];
 
+    // Token não existe
     if (!data) {
         throw {
             status: 401,
@@ -15,6 +16,19 @@ export function verify2FAService(tempToken, code) {
         };
     }
 
+    // Verificar expiração
+    const now = Date.now();
+    const expired = now > (data.createAt + data.expiresIn);
+
+    if (expired) {
+        delete twoFactorStorage[tempToken];
+        throw {
+            status: 401,
+            message: 'Código 2FA expirado'
+        };
+    }
+
+    // Verificar código
     if (data.code !== code) {
         throw {
             status: 401,
@@ -24,6 +38,7 @@ export function verify2FAService(tempToken, code) {
 
     const user = data.user;
 
+    // Gerar token JWT final
     const token = jwt.sign(
         {
             id: user.id,
@@ -36,6 +51,7 @@ export function verify2FAService(tempToken, code) {
         }
     );
 
+    // Remover 2FA temporário
     delete twoFactorStorage[tempToken];
 
     return {
