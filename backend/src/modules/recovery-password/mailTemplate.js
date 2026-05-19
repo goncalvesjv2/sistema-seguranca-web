@@ -16,7 +16,7 @@ export async function sendRecoveryEmail(email, token) {
 
   console.log('RECOVERY LINK:', link);
 
-  // EMAIL REAL
+  // Email realmente enviado
   await transporter.sendMail({
     from: process.env.EMAIL_USER,
     to: email,
