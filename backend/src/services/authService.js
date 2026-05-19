@@ -12,6 +12,7 @@ dotenv.config();
 let loginAttempts = {};
 
 export const registerService = async ( name, email, password ) => {
+  email = email.toLowerCase().trim();
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -41,6 +42,8 @@ export const registerService = async ( name, email, password ) => {
 };
 
 export const loginService = async (email, password) => {
+  email = email.toLowerCase().trim();
+  
   const sql = ` SELECT * FROM users WHERE email = ?`;
 
   return new Promise((resolve, reject) => {
@@ -155,6 +158,8 @@ export const loginService = async (email, password) => {
 };
 
 async function applyDelay(email) {
+  email = email.toLowerCase().trim();
+  
   const attempts = loginAttempts[email] || 1;
 
   const delay = attempts * 1000; // 1 segundo por tentativa
