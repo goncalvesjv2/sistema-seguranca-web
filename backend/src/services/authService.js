@@ -4,12 +4,15 @@ import connection from '../config/database.js';
 import { generate2FA } from '../utils/generate2FA.js';
 import twoFactorStorage from '../storage/twoFactorStorage.js';
 import dotenv from 'dotenv';
+import { securityLogger } from '../utils/securityLogger.js';
+import { send2FACode } from './mailService.js';
 
 dotenv.config();
 
 let loginAttempts = {};
 
 export const registerService = async ( name, email, password ) => {
+  email = email.toLowerCase().trim();
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -39,6 +42,8 @@ export const registerService = async ( name, email, password ) => {
 };
 
 export const loginService = async (email, password) => {
+  email = email.toLowerCase().trim();
+  
   const sql = ` SELECT * FROM users WHERE email = ?`;
 
   return new Promise((resolve, reject) => {
@@ -58,6 +63,12 @@ export const loginService = async (email, password) => {
 
         // Usuário não encontrado
         if (results.length === 0) {
+
+          securityLogger(
+            'Login Failed',
+            `Usuário não encontrado para email: ${email}`
+          )
+
           return reject({
             status: 401,
             message: 'Usuário não encontrado'
@@ -71,6 +82,12 @@ export const loginService = async (email, password) => {
 
         // Senha inválida
         if (!validPassword) {
+
+          securityLogger(
+            'LOGIN FAILED',
+            `Senha inválida: ${email}`
+          );
+
           loginAttempts[email] = (loginAttempts[email] || 0) + 1;
 
           // Aplicar delay
@@ -78,6 +95,12 @@ export const loginService = async (email, password) => {
 
           // Bloquear após 4 tentativas
           if (loginAttempts[email] >= 4) {
+            
+            securityLogger(
+              'ACCOUNT BLOCKED',
+              `Muitas tentativas: ${email}`
+            )
+            
             return reject({
               status: 403,
               message:
@@ -93,7 +116,25 @@ export const loginService = async (email, password) => {
 
         // Gerar código 2FA
         const code2FA = generate2FA();
-        console.log('Código 2FA:', code2FA);
+
+        // Enviar código por email
+        try {
+          await send2FACode(email, code2FA);
+          securityLogger(
+            'LOGIN SUCCESS',
+            `2FA enviado para ${email}`
+          );
+        } catch (err) {
+          securityLogger(
+            'EMAIL ERROR',
+            `Falha ao enviar 2FA para ${email}: ${err.message}`
+          );
+
+          return reject({
+            status: 500,
+            message: 'Erro ao enviar código 2FA'
+          });
+        }
 
         // Token temporário
         const tempToken = jwt.sign(
@@ -117,6 +158,8 @@ export const loginService = async (email, password) => {
 };
 
 async function applyDelay(email) {
+  email = email.toLowerCase().trim();
+  
   const attempts = loginAttempts[email] || 1;
 
   const delay = attempts * 1000; // 1 segundo por tentativa

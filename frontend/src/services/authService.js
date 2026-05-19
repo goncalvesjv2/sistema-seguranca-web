@@ -1,6 +1,6 @@
 export async function login(data) {
   try {
-    const response = await fetch('http://localhost:3000/auth/login', {
+    const response = await fetch('https://localhost:3000/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -27,7 +27,7 @@ export async function login(data) {
 
 export async function register(data) {
   try {
-    const response = await fetch('http://localhost:3000/auth/register', {
+    const response = await fetch('https://localhost:3000/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -59,7 +59,7 @@ export async function register(data) {
 
 export async function verify2FA(data) {
   try {
-    const response = await fetch('http://localhost:3000/auth/verify-2fa', {
+    const response = await fetch('https://localhost:3000/auth/verify-2fa', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
