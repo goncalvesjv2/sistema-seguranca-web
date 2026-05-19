@@ -18,3 +18,28 @@ export async function deleteAccount() {
 
   return data;
 }
+
+export async function updateProfile(name, email) {
+  const token = getToken();
+
+  const response = await fetch(
+    'https://localhost:3000/users/update-profile', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        name,
+        email
+      })
+    });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+}
