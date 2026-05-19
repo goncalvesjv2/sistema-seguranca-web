@@ -1,8 +1,8 @@
 # Sistema de Segurança Web 🔐
 
-Sistema acadêmico desenvolvido para a disciplina de Segurança da Informação, utilizando arquitetura Full Stack com React no frontend e Node.js no backend.
+Sistema desenvolvido para a disciplina de Segurança da Informação, utilizando React no frontend, Node.js no backend e MySQL no banco de dados.
 
-O projeto implementa autenticação segura de usuários, criptografia de senhas, autenticação em dois fatores (2FA), controle de sessão e proteção de rotas.
+O projeto implementa mecanismos modernos de autenticação, proteção de credenciais, controle de sessão, criptografia e comunicação segura.
 
 # 📌 Tecnologias Utilizadas
 
@@ -18,62 +18,31 @@ O projeto implementa autenticação segura de usuários, criptografia de senhas,
 * Node.js
 * Express
 * bcrypt
+* JWT
+* Nodemailer
+* Helmet
 * dotenv
 * cors
+* HTTPS (SSL)
 
 ## Banco de Dados
 
 * MySQL
 
-# ⚙️ Funcionalidades Implementadas
-
-## ✅ Cadastro de Usuários
-
-* Registro de novos usuários
-* Validação de campos
-* Verificação de e-mail único
-
-## ✅ Login de Usuários
-
-* Autenticação via email e senha
-* Integração frontend/backend
-
-## ✅ Criptografia de Senhas
-
-Utilização do bcrypt para:
-
-* hash de senhas
-* salt automático
-* proteção de credenciais
-
-## ✅ Autenticação em Dois Fatores (2FA)
-
-* Geração de código temporário
-* Validação do código
-* Segunda camada de autenticação
-
-## ✅ Sessão de Usuário
-
-* Controle de autenticação
-* Persistência de sessão
-* Expiração automática
-
-## ✅ Logout
-
-* Encerramento de sessão
-* Remoção de dados do localStorage
-
-## ✅ Proteção de Rotas
-
-Utilização de middleware para:
-
-* validação de autenticação
-* bloqueio de acesso não autorizado
-
-## ✅ Proteção Contra Força Bruta
-
-* Limite de tentativas de login
-* Bloqueio temporário
+## 🔐 Funcionalidades de Segurança
+  
+* Criptografia de senhas com bcrypt
+* Cadastro e login de usuários
+* Autenticação em dois fatores (2FA)
+* Recuperação de senha
+* Proteção contra força bruta
+* Controle e invalidação de sessão
+* Rotas protegidas com JWT
+* Security Headers com Helmet
+* Comunicação segura via HTTPS
+* Logs de segurança
+* Atualização de perfil
+* Exclusão de conta
 
 # 🗄️ Banco de Dados
 
@@ -96,7 +65,7 @@ CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
     email VARCHAR(100) UNIQUE,
-    password VARCHAR(100)
+    password VARCHAR(255)
 );
 ```
 
@@ -108,9 +77,17 @@ CREATE TABLE users (
 git clone https://github.com/goncalvesjv2/sistema-seguranca-web.git
 ```
 
-# 2️⃣ Backend
+# 2️⃣ Banco de Dados
 
-## Entrar na pasta
+## Abrir o XAMPP
+
+Inicie apenas:
+
+* MySQL
+
+# 3️⃣ Backend
+
+## Entrar na pasta backend
 
 ```bash
 cd backend
@@ -124,7 +101,7 @@ npm install
 
 ## Configurar arquivo .env
 
-Criar:
+Criar arquivo:
 
 ```txt
 .env
@@ -137,6 +114,12 @@ DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=
 DB_NAME=seguranca
+
+JWT_SECRET=
+JWT_EXPIRES_IN=
+
+EMAIL_USER=
+EMAIL_PASS=
 ```
 
 ## Executar backend
@@ -145,9 +128,15 @@ DB_NAME=seguranca
 node src/server.js
 ```
 
-# 3️⃣ Frontend
+Servidor backend:
 
-## Entrar na pasta
+```txt
+https://localhost:3000
+```
+
+# 4️⃣ Frontend
+
+## Entrar na pasta frontend
 
 ```bash
 cd frontend
@@ -163,4 +152,10 @@ npm install
 
 ```bash
 npm run dev
+```
+
+Frontend:
+
+```txt
+http://localhost:5173
 ```
