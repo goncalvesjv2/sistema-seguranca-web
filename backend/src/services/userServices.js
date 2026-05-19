@@ -30,3 +30,40 @@ export function deleteAccountService(userId) {
     });
   });
 }
+
+export function updateUserService(userId, name, email) {
+
+  email = email.toLowerCase().trim();
+
+  return new Promise((resolve, reject) => {
+
+    const sql = `
+      UPDATE users
+      SET name = ?, email = ?
+      WHERE id = ?
+    `;
+
+    connection.query(
+      sql,
+      [name, email, userId],
+      (error, result) => {
+
+        if (error) {
+          return reject({
+            status: 500,
+            message: error.message
+          });
+        }
+
+        securityLogger(
+          'ACCOUNT UPDATED',
+          `Usuário atualizado: ID ${userId}`
+        );
+
+        resolve({
+          message: 'Conta atualizada com sucesso'
+        });
+      }
+    );
+  });
+}
